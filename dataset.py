@@ -2,17 +2,18 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import normalize 
 import numpy as np
 
-df = pd.read_csv("diabetic_data.csv")
+df = pd.read_csv("attacks_labeled.csv")
 
-initial_len = df.shape[1]
-df = df.dropna(axis=1)
-print(f'Tamanho inicial: {initial_len}, tamanho final {df.shape[1]} | Descartados {initial_len - df.shape[1]} registros com valores NA')
+initial_len = df.shape[0]
+df = df.dropna()
+print(f'Tamanho inicial: {initial_len}, tamanho final {df.shape[0]} | Descartados {initial_len - df.shape[0]} registros com valores NA')
 
-df = df.drop('weight', axis=1)
+#df = df.drop('weight', axis=1)
 
-print(df)
+#print(df)
 
 df = df.reset_index(drop=True)
 
@@ -25,10 +26,19 @@ for column in not_numeric_columns:
 std_scaler = StandardScaler()
 
 df_scaler = pd.DataFrame(std_scaler.fit_transform(df), columns=df.columns)
-df_scaler = df_scaler.sample(frac=0.1)
-#y = df_scaler["type"]
-#df_scaler = df_scaler.drop(labels= 'type', axis= 1)
+X_normalized = normalize(df_scaler)
+X_normalized = pd.DataFrame(X_normalized) 
+
+y = df_scaler['class']
+X = df_scaler.drop('class', axis=1)  # Assuming 'type' is the target variable
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+train_normalized = normalize(X_train)
+train_normalized = pd.DataFrame(train_normalized) 
+test_normalized = normalize(X_test)
+test_normalized = pd.DataFrame(test_normalized) 
+#X_train, X_test= train_test_split(X_normalized, test_size=0.3, random_state=42)
 
 
-print(df_scaler)
+
+
 
