@@ -50,17 +50,14 @@ best_score = -1
 best_n = None
 
 for clusters in n_clusters:
-    # Fitting the Fuzzy C-Means]
     fuzzy = FuzzyCMeans(n_clusters=clusters)
     fuzzy_fit = fuzzy.fit(X_principal)
     labels = fuzzy.predict(X_test_principal)
     
-    # Calculate Silhouette score
     if clusters > 1:
         silhouette_avg = silhouette_score(X_test_principal, labels)
         silhouette_score_list.append(silhouette_avg)
 
-        # Check if it's the best score so far
         if silhouette_avg > best_score:
             best_score = silhouette_avg
             best_n = clusters
@@ -79,7 +76,6 @@ plt.show()
 print("Best Silhouette Score:", best_score)
 print("Best n_clusters:", best_n)
 
-# Re-fit with the best number of clusters
 fuzzy = FuzzyCMeans(n_clusters=best_n)
 fuzzy_fit = fuzzy.fit(X_principal)
 labels = fuzzy.predict(X_test_principal)
@@ -98,12 +94,10 @@ def plot_pca(X, model=None, print_centroids=False):
 
             X_clusters = model.predict(X)
 
-            # For each cluster, plot their respective X data instances
             for cluster in range(num_clusters):
                 indexes = np.where(X_clusters == cluster)
                 ax.scatter(X_pca[indexes, 0], X_pca[indexes, 1], s=20, label=f'Cluster #{cluster}')
 
-            # For each cluster centroid, plot the centroid
             ax.scatter(cluster_centers_principal_components[:, 0], cluster_centers_principal_components[:, 1], c='black', s=100, marker='x', label='Centroids')
         else:
             labels = model.predict(X)

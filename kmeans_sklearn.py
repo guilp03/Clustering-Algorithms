@@ -20,8 +20,8 @@ X_test_principal = dst.test_normalized
 
 model = KMeans()
 visualizer = KElbowVisualizer(model, k=(1,10))
-visualizer.fit(X_principal)    # Fit the data to the visualizer
-visualizer.poof()    # Draw/show/poof the data
+visualizer.fit(X_principal)   
+visualizer.poof()    
 
 n = 2
 
@@ -49,12 +49,10 @@ def plot_pca(X, model_kmeans=None, print_centroids=False):
 
             X_clusters = model_kmeans.predict(X)
 
-            # For each cluster, plot their respective X data instances
             for cluster in range(num_clusters):
                 indexes = np.where(X_clusters == cluster)
                 ax.scatter(X_pca[indexes, 0], X_pca[indexes, 1], s=20, label=f'Cluster #{cluster}')
 
-            # For each cluster centroid, plot the centroid
             ax.scatter(cluster_centers_principal_components[:, 0], cluster_centers_principal_components[:, 1], c='black', s=100, marker='x', label='Centroids')
         else:
             labels = model_kmeans.predict(X)

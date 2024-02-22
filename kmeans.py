@@ -11,22 +11,17 @@ class KMeans:
         self.max_iter = max_iter
 
     def fit(self, X):
-        # Convert DataFrame to numpy array
         X_array = X.values
         
-        # Inicialização aleatória dos centróides
         np.random.seed(0)
         self.centroids = X_array[np.random.choice(X_array.shape[0], self.n_clusters, replace=False)]
 
         for _ in range(self.max_iter):
-            # Atribuir cada ponto ao centróide mais próximo
             distances = np.sqrt(((X_array - self.centroids[:, np.newaxis])**2).sum(axis=2))
             labels = np.argmin(distances, axis=0)
 
-            # Atualizar os centróides
             new_centroids = np.array([X_array[labels == i].mean(axis=0) for i in range(self.n_clusters)])
 
-            # Verificar se houve convergência
             if np.all(self.centroids == new_centroids):
                 break
 
@@ -34,13 +29,10 @@ class KMeans:
 
 
     def predict(self, X):
-        # Convert DataFrame to numpy array
         X_array = X.values
 
-        # Compute distances between each data point and centroids
         distances = np.sqrt(((X_array - self.centroids[:, np.newaxis])**2).sum(axis=2))
 
-        # Assign data points to the nearest centroid (cluster)
         labels = np.argmin(distances, axis=0)
 
         return labels
@@ -57,14 +49,11 @@ best_n = None
 for n in n_clusters:
     kmeans = KMeans(n_clusters=n)
     fit_kmeans = kmeans.fit(X_principal)
-    labels = kmeans.predict(X_test_principal)  # Usar dados de treinamento para calcular o Silhouette Score
-    
-    # Calcular a pontuação Silhouette
+    labels = kmeans.predict(X_test_principal) 
     if n > 1:
         silhouette_avg = silhouette_score(X_test_principal, labels)
         silhouette_score_list.append(silhouette_avg)
     
-        # Verificar se é a melhor pontuação até agora
         if silhouette_avg > best_score:
             best_score = silhouette_avg
             best_n = n
@@ -83,7 +72,6 @@ plt.show()
 print("Best Silhouette Score:", best_score)
 print("Best n_clusters:", best_n)
 
-# Re-fit with the best number of clusters
 kmeans = KMeans(n_clusters=best_n)
 fit_kmeans = kmeans.fit(X_principal)
 labels = kmeans.predict(X_test_principal)
@@ -102,12 +90,10 @@ def plot_pca(X, model=None, print_centroids=False):
 
             X_clusters = model.predict(X)
 
-            # For each cluster, plot their respective X data instances
             for cluster in range(num_clusters):
                 indexes = np.where(X_clusters == cluster)
                 ax.scatter(X_pca[indexes, 0], X_pca[indexes, 1], s=20, label=f'Cluster #{cluster}')
 
-            # For each cluster centroid, plot the centroid
             ax.scatter(cluster_centers_principal_components[:, 0], cluster_centers_principal_components[:, 1], c='black', s=100, marker='x', label='Centroids')
         else:
             labels = model.predict(X)

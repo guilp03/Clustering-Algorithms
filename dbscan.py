@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 X = dst.train_normalized
 
 eps_values = [0.1,0.2, 0.3, 0.4, 0.5]
-min_samples_values = [5, 10, 15, 20, 25, 30]
+min_samples_values = [20, 25, 30, 35, 40, 45, 50]
 
 best_score = -1
 best_eps = None
@@ -18,29 +18,25 @@ silhouette_avg = None
 
 for eps in eps_values:
     for min_samples in min_samples_values:
-        # Executar o DBSCAN com os parâmetros atuais
         dbscan = DBSCAN(eps=eps, min_samples=min_samples)
         db_fit = dbscan.fit(X)
         labels = db_fit.labels_
         n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
         
-        # Calcular a pontuação Silhouette
         if n_clusters > 1:
             silhouette_avg = silhouette_score(X, labels)
         
-        # Verificar se é a melhor pontuação até agora
         if silhouette_avg:
             if silhouette_avg > best_score:
                 best_score = silhouette_avg
                 best_eps = eps
                 best_min_samples = min_samples
 
-# Imprimir os melhores parâmetros
 print("Melhor pontuação Silhouette:", best_score)
 print("Melhor valor de eps:", best_eps)
 print("Melhor valor de min_samples:", best_min_samples)
 
-dbscan = DBSCAN(eps=best_eps, min_samples=best_min_samples)
+dbscan = DBSCAN(eps=best_eps, min_samples=best_eps)
 db_fit = dbscan.fit(X)
 labels = db_fit.labels_
 
@@ -59,7 +55,6 @@ def plot_pca(X, model_dbscan=None):
         
         for label in unique_labels:
             if label == -1:
-                # Black used for noise.
                 ax.scatter(X_pca[labels == label, 0], X_pca[labels == label, 1], c='black', s=20, label='Noise')
             else:
                 ax.scatter(X_pca[labels == label, 0], X_pca[labels == label, 1], s=20, label=f'Cluster #{label}')
