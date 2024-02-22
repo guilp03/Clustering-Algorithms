@@ -11,7 +11,8 @@ X_principal = dst.train_normalized
 X_test_principal = dst.test_normalized
 
 
-n_clusters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+n_clusters = [ 2, 3, 4, 5, 6, 7, 8, 9, 10]
+silhouette_score_list = []
 
 class FuzzyCMeans:
     def __init__(self, n_clusters=2, m=2, max_iter=100, error=1e-5):
@@ -57,11 +58,23 @@ for clusters in n_clusters:
     # Calculate Silhouette score
     if clusters > 1:
         silhouette_avg = silhouette_score(X_test_principal, labels)
-        
+        silhouette_score_list.append(silhouette_avg)
+
         # Check if it's the best score so far
         if silhouette_avg > best_score:
             best_score = silhouette_avg
             best_n = clusters
+            
+fig, ax = plt.subplots(figsize=(12, 6))
+
+ax.set_xlabel('Número de clusters (K)')
+ax.set_ylabel('Pontuação de Silhueta')
+ax.set_xticks(n_clusters)
+ax.set_title('Pontuação de Silhueta em relação ao Número de clusters')
+
+ax.plot(n_clusters, silhouette_score_list, marker='o', linestyle='-')
+
+plt.show()
 
 print("Best Silhouette Score:", best_score)
 print("Best n_clusters:", best_n)

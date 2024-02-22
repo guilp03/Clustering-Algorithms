@@ -5,6 +5,7 @@ from sklearn.metrics import silhouette_score
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
 import dataset as dst
+from yellowbrick.cluster import KElbowVisualizer
 
 X_principal = dst.train_normalized
 X_test_principal = dst.test_normalized
@@ -16,32 +17,23 @@ X_test_principal = dst.test_normalized
 #X_test_principal = pca_test.fit_transform(dst.test_normalized)
 #X_test_principal = pd.DataFrame(X_test_principal, columns=['P1', 'P2'])
 
-n_clusters = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-best_score = -1
-best_n = None
+model = KMeans()
+visualizer = KElbowVisualizer(model, k=(1,10))
+visualizer.fit(X_principal)    # Fit the data to the visualizer
+visualizer.poof()    # Draw/show/poof the data
 
-for n in n_clusters:
-    kmeans = KMeans(n_clusters=n)
-    fit_kmeans = kmeans.fit(X_principal)
-    labels = kmeans.predict(X_test_principal)  # Usar dados de treinamento para calcular o Silhouette Score
-    
-    # Calcular a pontuação Silhouette
-    if n > 1:
-        silhouette_avg = silhouette_score(X_test_principal, labels)
-    
-        # Verificar se é a melhor pontuação até agora
-        if silhouette_avg > best_score:
-            best_score = silhouette_avg
-            best_n = n
-        
-print("Best Silhouette Score:", best_score)
-print("Best n_clusters:", best_n)
+n = 2
 
-# Re-fit with the best number of clusters
-kmeans = KMeans(n_clusters=best_n)
+kmeans = KMeans(n_clusters=n)
 fit_kmeans = kmeans.fit(X_principal)
 labels = kmeans.predict(X_test_principal)
+
+silhouette = silhouette_score(X_test_principal, labels)
+    
+        
+print("Best Silhouette Score:", silhouette)
+print("Best n_clusters:", n)
 
 def plot_pca(X, model_kmeans=None, print_centroids=False):
     pca = PCA(n_components=2, random_state=33)

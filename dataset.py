@@ -11,9 +11,6 @@ initial_len = df.shape[0]
 df = df.dropna()
 print(f'Tamanho inicial: {initial_len}, tamanho final {df.shape[0]} | Descartados {initial_len - df.shape[0]} registros com valores NA')
 
-#df = df.drop('weight', axis=1)
-
-#print(df)
 
 df = df.reset_index(drop=True)
 
